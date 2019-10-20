@@ -53,7 +53,7 @@ public class HistoryView extends JPanel implements View {
 
           if ("Spend".equals(type))
             c.setBackground(new Color(255, 50, 50, 70));
-          else
+          else if ("Balance".equals(type))
             c.setBackground(new Color(50, 255, 50, 70));
         }
 

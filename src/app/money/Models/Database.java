@@ -16,19 +16,20 @@ import java.sql.Statement;
  */
 public class Database implements AutoCloseable {
 
+  public static Database INSTANCE = null;
   private Connection con;
   private Statement stm;
   private ResultSet res;
 
-  public Database(String name) throws ClassNotFoundException, SQLException {
+  private Database(String name) throws ClassNotFoundException, SQLException {
     // Register UCanAccess Driver
     Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
     con = DriverManager.getConnection("jdbc:ucanaccess://" + name);
-    stm = con.createStatement();
   }
 
   public ResultSet query(String query) {
     try {
+      stm = con.createStatement();
       res = stm.executeQuery(query);
     } catch (SQLException e) {
       e.printStackTrace();
@@ -40,6 +41,7 @@ public class Database implements AutoCloseable {
 
   public void update(String query) {
     try {
+      stm = con.createStatement();
       stm.executeUpdate(query);
     } catch (SQLException e) {
       e.printStackTrace();
@@ -47,18 +49,22 @@ public class Database implements AutoCloseable {
     }
   }
 
+  public static Database getInstance() {
+    return INSTANCE;
+  }
+
+  public static void prepareDatabase(String name) throws Exception {
+    INSTANCE = new Database(name);
+  }
+
   /* Compatibility with try-with-resources */
   @Override
   public void close() throws Exception {
     try {
-      if (null != con) {
-        if (null != stm)
-          stm.close();
-        if (null != res)
-          res.close();
-
-        con.close();
-      }
+      if (null != stm)
+        stm.close();
+      if (null != res)
+        res.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }

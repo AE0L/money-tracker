@@ -12,7 +12,6 @@ import java.sql.ResultSet;
  */
 public class User {
 
-  private final String DATABASE = "MoneyDB.Accdb";
   private String name;
   private double balance;
 
@@ -21,7 +20,7 @@ public class User {
   }
 
   public void update() throws Exception {
-    try (Database db = new Database(DATABASE);
+    try (Database db = Database.getInstance();
         ResultSet res = db.query("SELECT Name, Balance FROM UserData")) {
 
       res.next();

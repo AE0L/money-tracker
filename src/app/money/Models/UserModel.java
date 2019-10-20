@@ -14,7 +14,6 @@ import java.util.ArrayList;
  */
 public class UserModel implements Model {
 
-  private static final String DATABASE = "MoneyDB.Accdb";
   private User user;
   private HistoryModel history;
 
@@ -40,7 +39,7 @@ public class UserModel implements Model {
       newAmount += amount;
     }
 
-    try (Database db = new Database(DATABASE)) {
+    try (Database db = Database.getInstance()) {
       db.update("UPDATE UserData SET Balance=" + newAmount + ", lastModified=" + getCurrentDate());
     } catch (Exception e) {
       e.printStackTrace();
@@ -62,7 +61,7 @@ public class UserModel implements Model {
   }
 
   public static UserModel registerUser(String name) {
-    try (Database db = new Database(DATABASE)) {
+    try (Database db = Database.getInstance()) {
       db.update("INSERT INTO UserData (Name, Balance, lastModified) VALUES ('" + name + "', 0, "
           + getCurrentDate() + ")");
 

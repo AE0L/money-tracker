@@ -2,6 +2,7 @@ package app.money.Controller;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import app.money.Models.Database;
 import app.money.Models.UserModel;
 import app.money.Views.IndexView;
 import app.money.Views.RootView;
@@ -21,6 +22,12 @@ public class Root {
 
   public Root(RootView view) {
     this.view = view;
+
+    try {
+      Database.prepareDatabase("MoneyDB.Accdb");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
     try {
       this.index = new Index(new UserModel(), new IndexView(), view.getFrame());
@@ -48,8 +55,7 @@ public class Root {
 
     } while ("".equals(name));
 
-    this.index =
-        new Index(UserModel.registerUser(name), new IndexView(), view.getFrame());
+    this.index = new Index(UserModel.registerUser(name), new IndexView(), view.getFrame());
   }
 
   private void initView() {

@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
  */
 public class HistoryModel implements Model {
 
-  private final String DATABASE = "MoneyDB.Accdb";
+  private final Object[] COLUMNS = {"Type", "Value", "Details", "Date"};
 
   public void update(String type, Object value, ArrayList<String> categories) {
     String details = "";
@@ -32,7 +32,7 @@ public class HistoryModel implements Model {
       }
     }
 
-    try (Database db = new Database(DATABASE)) {
+    try (Database db = Database.getInstance()) {
       db.update("INSERT INTO History (ActivityType, ActivityValue, ActivityDetails, ActivityDate) "
           + "VALUES ('" + type + "','Php " + value.toString() + "','" + details + "','" + date
           + "')");
@@ -44,7 +44,7 @@ public class HistoryModel implements Model {
   public Object[][] getData() {
     ArrayList<Object[]> data = new ArrayList<>();
 
-    try (Database db = new Database(DATABASE)) {
+    try (Database db = Database.getInstance()) {
       Object[] record;
 
       ResultSet res = db.query("SELECT * FROM History");
@@ -74,20 +74,9 @@ public class HistoryModel implements Model {
     return finalData;
   }
 
-  public Object[] getColumns() {
-    Object[] columns = {"Type", "Value", "Details", "Date"};
-
-    return columns;
-  }
-
   public DefaultTableModel getTableModel() {
-    return new DefaultTableModel(getData(), getColumns()) {
+    return new DefaultTableModel(getData(), COLUMNS) {
       private static final long serialVersionUID = 1L;
-
-      @Override
-      public Class<? extends Object> getColumnClass(int column) {
-        return getValueAt(0, column).getClass();
-      }
 
       @Override
       public boolean isCellEditable(int row, int col) {
